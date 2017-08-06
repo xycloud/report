@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="vdop.frame.online">
+	<select id="selectBySessionId" resultClass="java.util.HashMap" >
+		select rid "rid",to_number(user_id) "userId",login_time "loginTime",active_time "LastActive"
+		from  sc_online_users 
+		<isNull prepend=" where " property="sessionId">
+			1=2
+		</isNull>
+		<isNotNull prepend=" where " property="sessionId">
+			session_id=#sessionId#
+		</isNotNull>
+	</select>
+</sqlMap>

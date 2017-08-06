@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="vdop.frame.menu">
+	<select id="list" resultClass="java.util.HashMap" parameterClass="java.util.Map">
+	select menu_id "id",
+       menu_pid "pid",
+       menu_name "text",
+       menu_desc "desc",
+       menu_order "order",
+       menu_url "url",
+       CASE
+         WHEN EXISTS
+          (SELECT 1 FROM  sc_menu b WHERE b.menu_pid = a.menu_id) THEN
+          'closed'
+         ELSE
+          'open'
+       END "state"
+  from  sc_menu a
+ where 1 = 1 and menu_pid =#id#
+
+  order by menu_order, menu_id
+	</select>
+	
+</sqlMap>

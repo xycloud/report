@@ -1,0 +1,23 @@
+.catalist .cataleft {
+	width:200px;
+	height:auto;
+	float:left;
+}
+.textpanel{
+	line-height:30px;
+	margin:10px;
+}
+.inputform {
+	width:160px;
+}
+span.inputtext {
+	display:-moz-inline-box;  
+	display:inline-block;
+	width:90px;
+}
+.catalist .cataright {
+	margin-top:5px;
+	margin-right:10px;
+	float:right;
+	width:780px;
+}

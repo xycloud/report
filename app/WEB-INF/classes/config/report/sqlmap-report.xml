@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="bi.ext.report">
+<!-- 查询公有报表目录 -->
+	<select id="selectPubTypes" resultClass="java.util.HashMap" >
+		select id "id",
+       pid "pid",
+       name "text",
+       note "desc",
+       ord "order",
+       CASE
+         WHEN EXISTS
+          (SELECT 1 FROM report_catalog b WHERE b.pid = a.id) THEN
+          'closed'
+         ELSE
+          'open'
+       END "state"
+	  from report_catalog a
+	  where type = #type# and pid = #id#
+	  <isNotNull  prepend=" and " property="userId" > 
+		    userid=#userId#
+	  </isNotNull>
+	  order by ord, id
+	</select>
+	
+	<select id="selectPubTypes-all" resultClass="java.util.HashMap" >
+	select id "id",
+       pid "pid",
+       name "text",
+       note "desc",
+       ord "order"
+	  from report_catalog a
+	  where type = #type#
+	  <isNotNull  prepend=" and " property="userId" > 
+		    userid=#userId#
+	  </isNotNull>
+	  order by ord, id
+	</select>
+	
+	<insert id="insertCata">
+		insert into report_catalog(name, type, userid, note, ord, pid
+		<isEqual property="dbName" compareValue="oracle">  
+		,id
+		</isEqual>
+		) values(#name#, #type#, #userId#, #note#, #ord#, #pid#
+		<isEqual property="dbName" compareValue="oracle">  
+		,#id#
+		</isEqual>
+		)
+	</insert>
+	
+	<update id="updateCata">
+		update report_catalog set name = #name#, note=#note#, ord = #ord# where id = #id#
+	</update>
+	
+	<select id="reportExist" resultClass="java.lang.Integer">
+		select count(1) from report_user_save where pagename = #pageName# and userid = #userid# and cata_id = #cataId# 
+	</select>
+	
+	<select id="releaseExist" resultClass="java.util.HashMap">
+		select rid "id", rfile "file" from olap_user_release where name = #pageName# and cata_id = #cataId#
+	</select>
+	
+	<select id="maxId" resultClass="java.lang.Integer">
+		select max(id) from report_catalog
+	</select>
+	
+	<delete id="delCata">
+		delete from report_catalog where id = #id# 
+	</delete>
+	
+	<select id="getOne" resultClass="java.util.HashMap">
+		select id "id", name "name", type "type", note "note", ord "ord", pid "pid" from report_catalog where id = #id#
+	</select>
+	
+	<select id="listsyReport" resultClass="java.util.HashMap" >
+		select a.pageid "id", a.pagename "name", a.crtdate "crtdate", a.updatedate "updatedate", 
+		<isEqual property="sort" compareValue="crtdate">
+		a.crtdate ord,
+		</isEqual>
+		<isEqual property="sort" compareValue="updatedate">
+		a.updatedate ord,
+		</isEqual>
+		a.cata_id "cataId", 'report' income, b.name "cata"
+		from report_user_save a, report_catalog b where a.userid = #userid# and a.cata_id = b.id
+		 <isNotNull  prepend=" and " property="cataId" > 
+			    a.cata_id in ($cataId$)
+		  </isNotNull>
+		<isEqual property="order" compareValue="asc">
+		order by ord asc
+		</isEqual>
+		<isEqual property="order" compareValue="desc">
+		order by ord desc
+		</isEqual>
+	</select>
+	
+	<select id="countSyReport" resultClass="java.lang.Integer">
+		select count(pageid) from (
+			select pageid from report_user_save where userid = #userid# 
+			 <isNotNull  prepend=" and " property="cataId" > 
+				    cata_id in ($cataId$)
+			  </isNotNull>
+		 ) cc
+	</select>
+	
+	<select id="listRelease" resultClass="java.util.HashMap" >
+		select a.rid "id", a.name "name", a.rfile "rfile", a.crt_date "crtdate", a.cata_id "cataId", a.income "income", b.login_name "loginName", c.name "cata"
+		from olap_user_release a,  sc_login_user b, report_catalog c where a.crt_user = b.user_id and a.cata_id = c.id
+		 <isNotNull  prepend=" and " property="cataId" > 
+			    a.cata_id = #cataId#
+		  </isNotNull>
+		 order by a.crt_date desc
+	</select>
+	
+	<select id="listgyReport" resultClass="java.util.HashMap" >
+		select a.rid "id", a.name "name", a.rfile "rfile", a.crt_date "crtdate", a.cata_id "cataId", a.income "income", b.login_name "loginName", c.name "cata"
+		from olap_user_release a,  sc_login_user b, report_catalog c where a.crt_user = b.user_id and a.cata_id = c.id
+		 <isNotNull  prepend=" and " property="cataId" > 
+			    a.cata_id in ($cataId$)
+		  </isNotNull>
+		 order by a.crt_date desc
+	</select>
+	<select id="countgyReport" resultClass="java.lang.Integer">
+		select count(1) from olap_user_release a,  sc_login_user b where a.crt_user = b.user_id
+	 <isNotNull  prepend=" and " property="cataId" > 
+			    a.cata_id in ($cataId$)
+		  </isNotNull>
+	</select>
+	
+	<delete id="delRelease">
+		delete from olap_user_release where rid = #pageId# and income = #income#
+	</delete>
+	
+	<update id="updateRelease">
+		update olap_user_release set name = #pageName#, cata_id = #cataId# where rid = #pageId#
+	</update>
+	
+	<select id="hasPubReport" resultClass="java.lang.Integer">
+		select count(1) from olap_user_release a, report_catalog b where a.cata_id = b.id and b.id = #id#
+	</select>
+	
+	<select id="hasPrivateReport" resultClass="java.lang.Integer">
+		select count(1) from (
+			select 1 from report_user_save a, report_catalog b where a.cata_id = b.id and b.id = #id# and a.userid = #userId#
+		) cc
+	</select>
+	
+	<!-- 查询用户授权的报表 -->
+	<select id="listAuthReport" resultClass="java.util.HashMap" >
+		select id "id", name "name", name "text",cataId "cataId", income "income", crtdate "crtdate", 
+		rfile "rfile", loginName "loginName", cata "cata", max(r_view) "view", max(r_print) "print", max(export) "export" from (
+		select a.*, b.r_view, b.r_print, b.export, c.login_name loginName, d.name cata from (  /**角色权限*/
+		    select rid id, name, cata_id cataId,income, crt_date crtdate,crt_user, rfile
+		   from olap_user_release
+		) a , (
+		  select r.r_view,r.r_print,r.export,r.report_id 
+		  from  role_report_rela r,  role_user_rela u 
+		  where r.role_id =u.role_id and u.user_id = #userid#
+		) b,  sc_login_user c, report_catalog d 
+		where a.id = b.report_id and a.crt_user = c.user_id and a.cataId = d.id
+		union all
+		 select a.*, b.r_view, b.r_print, b.export, c.login_name loginName, d.name cata from (  /**用户权限**/
+		    select rid id, name, cata_id cataId,income, crt_date crtdate,crt_user, rfile
+		   from olap_user_release
+		) a , (
+		  select r.r_view,r.r_print,r.export,r.report_id 
+		  from  user_report_rela r where r.user_id = #userid#
+		) b,  sc_login_user c, report_catalog d 
+		where a.id = b.report_id and a.crt_user = c.user_id and a.cataId = d.id
+		) bb where 1=1 
+		 <isNotNull  prepend=" and " property="cataId" > 
+			    cataId in ($cataId$)
+		  </isNotNull>
+		 group by id, name, cataId, income, crtdate, rfile, loginName, cata  /**权限叠加**/
+		order by crtdate desc
+	</select>
+	<select id="countAuthReport" resultClass="Integer" >
+		select count(1) cnt from (
+		select id from (
+		select a.*, c.login_name loginName, d.name cata from (  /**角色权限*/
+		    select rid id, name, cata_id cataId,income, crt_date crtdate,crt_user, rfile
+		   from olap_user_release
+		) a , (
+		  select r.report_id 
+		  from  role_report_rela r,  role_user_rela u 
+		  where r.role_id =u.role_id and u.user_id = #userid#
+		) b,  sc_login_user c, report_catalog d 
+		where a.id = b.report_id and a.crt_user = c.user_id and a.cataId = d.id
+		union all
+		 select a.*, c.login_name loginName, d.name cata from (  /**用户权限**/
+		    select rid id, name, cata_id cataId,income, crt_date crtdate,crt_user, rfile
+		   from olap_user_release
+		) a , (
+		  select r.report_id 
+		  from  user_report_rela r where r.user_id = #userid#
+		) b,  sc_login_user c, report_catalog d 
+		where a.id = b.report_id and a.crt_user = c.user_id and a.cataId = d.id
+		) bb where 1=1 
+		  <isNotNull  prepend=" and " property="cataId" > 
+			    cataId in ($cataId$)
+		  </isNotNull>
+		group by id
+		) cc
+	</select>
+	
+	<!-- 对用户访问的报表进行鉴权 
+	//已不在使用 
+	<select id="authReport" resultClass="java.util.HashMap" >
+		select id "id", name "name",cataId "cataId", income "income", crtdate "crtdate", 
+		rfile "rfile", loginName "loginName", cata "cata", max(r_view) "view", max(print) "print", max(export) "export" from (
+		select a.*, b.r_view, b.print, b.export, c.login_name loginName, d.name cata from (  /**角色权限*/
+		    select rid id, name, cata_id cataId,income, crt_date crtdate,crt_user, rfile
+		   from olap_user_release
+		) a , (
+		  select r.r_view,r.print,r.export,r.report_id 
+		  from  role_report_rela r,  role_user_rela u 
+		  where r.role_id =u.role_id and u.user_id = #userid#
+		) b,  sc_login_user c, report_catalog d 
+		where a.id = b.report_id and a.crt_user = c.user_id and a.cataId = d.id
+		union all
+		 select a.*, b.r_view, b.print, b.export, c.login_name loginName, d.name cata from (  /**用户权限**/
+		    select rid id, name, cata_id cataId,income, crt_date crtdate,crt_user, rfile
+		   from olap_user_release
+		) a , (
+		  select r.r_view,r.print,r.export,r.report_id 
+		  from  user_report_rela r where r.user_id = #userid#
+		) b,  sc_login_user c, report_catalog d 
+		where a.id = b.report_id and a.crt_user = c.user_id and a.cataId = d.id
+		) bb where id = #rid#
+		 group by id, name, cataId, income, crtdate, rfile, loginName, cata  /**权限叠加**/
+	</select>
+	-->
+</sqlMap>

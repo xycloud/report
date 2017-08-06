@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="vdop.frame.frame">
+	<select id="frameleftmenu" resultClass="java.util.HashMap" parameterClass="java.util.HashMap">
+		select menu_pid "menu_pid",menu_id "menu_id",menu_name "menu_name",menu_url "menu_url"
+					 from  sc_menu where menu_id in (
+					 select distinct menu_id from  user_menu_rela where user_id=
+					#user_id#)
+					 and menu_pid=#menu_pid# order by menu_id
+	</select>	 
+	
+	<select id="queryUserMenu" resultClass="java.util.HashMap">
+		select a.menu_id "id",
+       menu_name "text",
+       menu_url "url",
+       CASE
+         WHEN EXISTS
+          (SELECT 1 FROM  sc_menu b WHERE b.menu_pid = a.menu_id) THEN
+          0
+         ELSE
+          1
+       END "leaf"
+  from  sc_menu a
+ where  menu_pid = #pid#
+  and menu_id in
+ (
+     select distinct menu_id from  role_menu_rela c, role_user_rela d
+     where c.role_id = d.role_id and d.user_id =#userId#
+     union select distinct menu_id from  user_menu_rela e where e.user_id = #userId#
+ )
+ order by a.menu_order, a.menu_id
+	</select>
+	
+</sqlMap>

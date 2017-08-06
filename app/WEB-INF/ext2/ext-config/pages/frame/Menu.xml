@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ext-config>
+		<textField type="hidden" id="name" show="true"/>
+		<textField type="hidden" id="desc" show="true"/>
+		<textField type="hidden" id="id" show="true"/>
+		<textField type="hidden" id="pid" show="true"/>
+		<textField type="hidden" id="order" show="true"/>
+		<textField type="hidden" id="url" show="true"/>
+		
+		<include page="/pages/frame/Menu.jsp"></include>
+		
+	
+</ext-config>

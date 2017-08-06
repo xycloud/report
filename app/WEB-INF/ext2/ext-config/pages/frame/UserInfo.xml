@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ext-config>
+
+<text>
+ <![CDATA[
+ <style>
+ .t_uinfo {
+ 	width: 100%;
+    border-collapse: collapse;
+	border: 1px solid #CACACA;
+    border-spacing: 0px;
+    border-cellpadding: 0px;
+ }
+ 
+ .t_uinfo td {
+ 	border: 1px solid #CACACA;
+    PADDING: 3px;
+    font-size: 14px;
+     height:20px;
+ }
+ </style>
+  ]]>
+</text>
+
+
+<data key="uinfo">
+select login_name, log_date log_date, staff_id, state, 
+site_name, log_cnt
+from  sc_login_user a, code_site b where user_id = ${s.userId} and a.site_id = b.site_id
+</data>
+
+			<div align="center" style="margin:10px;"  class="crossReport">
+			
+			<text>
+			<template>
+			 <![CDATA[
+			 <h3 align="left">账号信息：</h3>
+<table cellpadding="0" cellspacing="0" class="t_uinfo">
+<tr>
+<td align="left">登录名： </td>
+<td align="left">${uinfo.staff_id}</td>
+</tr>
+<tr>
+<td align="left">用户名： </td>
+<td align="left">${uinfo.login_name}</td>
+</tr>
+<tr>
+<td align="left">账号状态： </td>
+<td align="left">#if($uinfo.state == 1)
+      正常
+    #end
+    #if($uinfo.state == 2)
+      试用
+    #end
+ #if($uinfo.state == 0)
+      停用
+    #end
+</td>
+</tr>
+<tr>
+<td align="left">登录次数： </td>
+<td align="left">${uinfo.log_cnt}次</td>
+</tr>
+<tr>
+<td align="left">上次登录时间： </td>
+<td align="left"> ${uinfo.log_date} </td>
+</tr>
+</table>			
+<br/> 
+			 ]]>
+			</template>
+			</text>
+			
+			<textField type="hidden" id="flag" show="true"/>
+				<div>
+				<button type="button" onClick="parent.closeMe()" desc="关闭"/>
+				</div>
+			</div>
+			
+</ext-config>

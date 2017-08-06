@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="web.report">
+	
+	<insert id="insertUserSave">
+	insert into report_user_save(pageid,userid,pageinfo,pagename, cata_id, crtdate, updatedate) values(#pageId#,#userid#, #pageInfo#, #pageName#, #cataId#,
+		<isEqual property="dbName" compareValue="mysql">  
+		now(), now()
+		</isEqual>
+		<isEqual property="dbName" compareValue="oracle">
+		sysdate, sysdate  
+		</isEqual>
+		<isEqual property="dbName" compareValue="sqlser">
+		GETDATE(), GETDATE()  
+		</isEqual>
+	)
+	</insert>
+	
+	<!-- 查询页面ID -->
+	<select id="querypid" resultClass="Integer">
+	select case WHEN max(pageId) is null then 1 else  max(pageId) + 1 end "rid" from report_user_save
+	</select>
+	
+	<update id="updateUserSave" >
+	update report_user_save set pageinfo = #pageInfo#,
+	<isEqual property="dbName" compareValue="mysql">  
+	updatedate = now() 
+	</isEqual>
+	<isEqual property="dbName" compareValue="oracle">
+	updatedate = sysdate
+	</isEqual>
+	<isEqual property="dbName" compareValue="sqlser">
+	updatedate = GETDATE()
+	</isEqual>
+	where pageid = #pageId#
+	</update>
+	
+	<select id="querypageinfo" resultClass="java.util.HashMap">
+	select pageinfo "pageinfo", pageId "pageId", userId "userId", pagename "pagename" from report_user_save where pageid = #pageId#
+	</select>
+	
+	<select id="querymyreport" resultClass="java.util.HashMap">
+	select pageid "id", pagename "text", 'open' "state" 
+	from report_user_save where userid = #userId# 
+	order by crtdate desc
+	</select>
+	
+	<select id="listreport" resultClass="java.util.HashMap">
+	select a.pageid "id", a.pagename "name", a.crtdate "crtdate", a.updatedate "updatedate", b.name "cata"
+	from report_user_save a, report_catalog b where a.cata_id = b.id and a.userid = #userId# 
+	 <isNotNull  prepend=" and " property="cataId" > 
+		 a.cata_id=#cataId#
+	  </isNotNull>
+	  <isNotNull  prepend=" and " property="keyword" > 
+		 a.pagename like '%$keyword$%'
+	  </isNotNull>
+	order by crtdate desc
+	</select>
+	
+	<select id="listtypes" resultClass="java.util.HashMap">
+	select id "id", name "name" from report_type order by id
+	</select>
+	
+	<insert id="release">
+		<isEqual property="dbName" compareValue="mysql">  
+		insert into olap_user_release(name,rfile,cata_id,crt_date, crt_user, income) values(#pageName#,#fileName#, #cataId#, now(), #userid#, 'report')
+		</isEqual>
+		<isEqual property="dbName" compareValue="oracle">
+		insert into olap_user_release(name,rfile,cata_id,crt_date, crt_user, rid, income) values(#pageName#,#fileName#, #cataId#, sysdate, #userid#, #pageId#, 'report')
+		</isEqual>
+		<isEqual property="dbName" compareValue="sqlser">  
+		insert into olap_user_release(name,rfile,cata_id,crt_date, crt_user, income) values(#pageName#,#fileName#, #cataId#, GETDATE(), #userid#, 'report')
+		</isEqual>
+	</insert>
+	
+	<select id="getOneReport" resultClass="String">
+	select rfile "rfile" from olap_user_release where rid = #rid# 
+	</select>
+	
+	<delete id="delReport">
+	delete from report_user_save where pageid = #pageId#
+	</delete>
+	
+	<update id="rename">
+	update report_user_save set pagename = #reportName#, cata_id = #cataId# where pageid = #reportId#
+	</update>
+	
+	<insert id="savemv">
+	insert into mv_page_info(mv_id, mv_content) values(#id#,#content#)
+	</insert>
+	
+	<update id="updatemv">
+	update mv_page_info set mv_content = #content# where mv_id = #id#
+	</update>
+	
+	<delete id="deletemv">
+	delete from mv_page_info where mv_id = #id#
+	</delete>
+	
+	<select id="getmv" resultClass="java.util.HashMap">
+	select mv_id "id", mv_content "ctx" from mv_page_info where  mv_id = #id#
+	</select>
+</sqlMap>

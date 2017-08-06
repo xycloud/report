@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ext-config>
+		<box title="用户管理">
+				<textField id="staffId" desc="工 &amp;nbsp; 号"/>
+				<textField id="login_name" desc=" 用户名称"/> 
+				<select desc=" 用户状态 " id="state">
+				 <option value="">不限</option>
+				 <option value="1">开启</option>
+				 <option value="0">关闭</option>
+				</select> 
+				<button action="frame.User" method="" desc="搜索" checkParam="false"/>
+			
+			
+			<div align="right" style="padding:5px;">
+				<button action="frame.User" desc="新建" method="preAdd" checkParam="false" submit="get"></button>
+			 
+				<button action="frame.User" method="preMod" submit="get" desc="修改">
+				</button>
+				<button action="frame.User" method="del" desc="删除" confirm="true" submit="get"></button>
+			</div>
+			
+			<dataGrid>
+				<col-config>
+					<col type="radio" alias="user_id" id="user_id" require="true" desc="多选" width="8%" />
+					<col alias="staff_id" desc="工号" width="15%"/>
+					<col alias="login_name" desc="用户名" width="15%"/>
+					<col alias="desc" desc="地域" width="15%" />
+					<col alias="state" desc="状态" width="15%"/>
+					<col alias="user_id" desc="操作" width="25%">
+						<colLink byAlias="user_id" action="frame.UserPermission" desc=" 关联角色 " method="roleList" />
+						<colLink byAlias="user_id" action="frame.UserPermission" desc=" 授权菜单 " method="menuList" />
+						<colLink byAlias="user_id" action="frame.UserPermission" desc=" 授权报表 " method="reportList" />
+					</col>	
+				</col-config>
+				<ds pageSize="15">
+					<![CDATA[
+					select user_id,staff_id,login_name, '' "desc", a.state "state"   
+					from  sc_login_user a
+					where 1=1
+					#if(${deptid} != '')
+						and a.department = '${deptid}'
+					#end
+					#if(${staffId} != '')
+						and staff_id like '%${staffId}%'
+					#end
+					#if(${login_name} != '')
+						and login_name like '%${login_name}%'
+					#end
+					#if(${state} != '')
+						and a.state = '${state}'
+					#end 
+					]]>
+				</ds>
+			</dataGrid>
+		</box>
+</ext-config>

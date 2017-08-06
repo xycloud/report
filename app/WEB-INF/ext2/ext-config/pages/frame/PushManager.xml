@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ext-config>
+		<box title="推送到3G报表管理">
+		
+			
+			<div align="left">
+				<textField id="title" desc="报表名称"/>
+				<button action="frame.PushManager" method="" desc="搜索" checkParam="false"/>
+			</div>
+			<div align="right" style="padding:5px;">
+				<button action="frame.PushManager" method="delete" desc="删除" confirm="true"></button>
+			</div>
+			<dataGrid>
+				<col-config>
+					<col type="checkbox" alias="rid" id="rid" require="true" desc="多选" width="5%" />
+					<col alias="title" desc="报表名称" width="20%" order="true"/>
+					<col alias="p_url" desc="访问地址" width="20%" order="true"/>
+					<col alias="note" desc="报表说明" width="20%" order="true"/>
+					<col alias="login_name" desc="创建人" width="8%" align="center" order="true"/>
+					<col alias="crtDate" desc="创建时间" width="8%" align="center" formatPattern="yyyy-MM-dd" order="true"/>
+				</col-config>
+				<ds pageSize="15">
+					<![CDATA[
+					select a.*, b.login_name from portal_model_list a,  sc_login_user b 
+					where a.crtuser = b.user_id
+					#if($title != '')
+						and title like '%$title%'
+					#end
+					order by crtdate desc
+				]]>
+				</ds>
+			</dataGrid>
+		</box>
+</ext-config>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="vdop.role">
+	<select id="rolemenu" resultClass="java.util.HashMap">
+	   select a.menu_id "id",
+       a.menu_pid "pid",
+       menu_name "text",
+       b.menu_id "id2"
+	   from (select distinct (m.menu_id) menu_id,
+	                        m.menu_name menu_name,
+	                        menu_order,
+	                        m.menu_pid menu_pid
+	          from  sc_menu m) a
+	    left join (select menu_id from  role_menu_rela where role_id = #role_id#) b
+	    on a.menu_id = b.menu_id
+	    order by a.menu_order, a.menu_id
+	</select>	
+	
+	<select id="rolereport" resultClass="java.util.HashMap">
+		select a.id "id", a.name "name", a.pid "pid", a.tp "tp", a.ord "ord", 
+		b.r_view "view", b.r_print "print", b.export "export" from (
+        select id, name, pid, 'cata' tp, ord,
+        <isEqual property="dbName" compareValue="mysql">  
+		now() 
+		</isEqual>
+		<isEqual property="dbName" compareValue="oracle">
+		sysdate
+		</isEqual>
+		<isEqual property="dbName" compareValue="sqlser">
+		GETDATE()
+		</isEqual>
+         crtdate from report_catalog where type = -1
+		union all
+		select rid+100000 id, name, cata_id pid, 'report' tp, 1 ord, crt_date crtdate
+		 from olap_user_release
+		) a left join (select * from  role_report_rela where role_id = #roleId#) b on a.id - 100000 = b.report_id
+		order by tp, ord, a.crtdate desc, id
+	</select>
+</sqlMap>

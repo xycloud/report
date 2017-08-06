@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMapConfig PUBLIC "-//ibatis.apache.org//DTD SQL Map Config 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-config-2.dtd">
+<sqlMapConfig>
+	<settings useStatementNamespaces="true" lazyLoadingEnabled="true" />
+	<sqlMap resource="config/frame/sqlmap-login.xml"/>
+	<sqlMap resource="config/frame/sqlmap-menu.xml"/>
+	<sqlMap resource="config/frame/sqlmap-logout.xml"/>
+	<sqlMap resource="config/frame/sqlmap-online.xml"/>
+	<sqlMap resource="config/frame/sqlmap-frametop.xml"/>
+	<sqlMap resource="config/frame/sqlmap-frameleftmenu.xml"/>
+	<sqlMap resource="config/frame/sqlmap-framebuttom.xml"/>
+	<sqlMap resource="config/frame/sqlmap-userPermission.xml"/>
+	<sqlMap resource="config/frame/sqlmap-rolemenu.xml"/>
+	<sqlMap resource="config/frame/sqlmap-user.xml"/>
+	<sqlMap resource="config/frame/sqlmap-password.xml"/>
+	<sqlMap resource="config/frame/sqlmap-webreport.xml"/>
+	<sqlMap resource="config/report/sqlmap-report.xml"/>
+</sqlMapConfig>

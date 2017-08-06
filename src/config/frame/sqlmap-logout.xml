@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="vdop.frame.logout">
+	<update id="updateLog" >
+		update  sc_login_log set logout_date=#logoutTime#,last_active_date=#lastActive#
+		<isNotNull  prepend=" where " property="rid" > 
+		    rid=#rid#
+		</isNotNull>
+		<isNull prepend=" where " property="rid" > 
+			 1=2
+		</isNull>
+	</update>	
+	<delete id="deleteOnline">
+		delete from  sc_online_users 
+		<isNotNull  prepend=" where " property="rid" > 
+		    rid=#rid#
+		</isNotNull>
+		<isNull prepend=" where " property="rid" > 
+			 1=2
+		</isNull>
+	</delete>
+</sqlMap>

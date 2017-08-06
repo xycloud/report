@@ -1,0 +1,47 @@
+a:link {
+	color: #333333;
+	text-decoration: none;
+}
+a:visited {
+	text-decoration: none;
+	color: #333333;
+}
+a:hover {
+	text-decoration: none;
+	color: #333333;
+}
+a:active {
+	text-decoration: none;
+	color: #999999;
+}
+.pheader {
+	height:56px;
+	background-image:url(../img/nframe/headerbg.gif);
+	background-attachment: fixed;
+	background-repeat: repeat-x;
+	width:100%;
+}
+.pfooter {
+	height:28px;
+	background-color:#CCC;
+	border-top:solid 2px #FFF;
+}
+.uinfo {
+	margin:5px 10px 8px 5px;
+}
+.uinfo a {
+	text-decoration:underline;
+	color:#333333;
+}
+.uinfo a:hover {
+	color:#900;
+}
+.pw_panel {
+    background-color: #FFFFFF;
+    border: 1px solid #333333;
+    display: block;
+    height: 150px;
+    position: absolute;
+    width: 350px;
+    z-index: 1001;
+}

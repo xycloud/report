@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ext-config>
+	<constant name="devMode" value="true" />
+	<constant name="dbName" value="mysql" />
+	
+	<constant name="highchartExport" value="http://bi.rosetech.cn:8080/highcharts-export/" />
+	<constant name="resPath" value="http://bi.rosetech.cn" />
+	 
+	<constant name="xmlResource" value="/WEB-INF/ext2/ext-config/pages/" />
+	<constant name="securityClass" value="com.ruisi.vdop.service.frame.ExtLoginChecker"/>
+	<constant name="loginUserClass" value="com.ruisi.vdop.service.frame.ExtLoginInfoLoader"/>
+	<constant name="fieldLoader" value="com.ruisi.vdop.ser.bireport.MyCrossFieldLoader" />
+	<constant name="buildInter" value="com.ruisi.vdop.service.frame.MVSecurity"/>
+	<constant name="xmlLoader" value="com.ruisi.vdop.service.frame.LoadXmlFromDB"/>
+	
+	<service id="ext.sys.param.cascade" class="com.ruisi.ext.engine.service.impl.ParameterCascadeServiceImpl" result="global"></service>
+	 <service id="ext.sys.fenye.ajax" class="com.ruisi.ext.engine.service.impl.AjaxFenyeServiceImpl" result="global"></service>
+	 <service id="ext.sys.tab.ajax" class="com.ruisi.ext.engine.service.impl.TabAjaxService" result="global"></service>
+	 <service id="ext.sys.export" class="com.ruisi.ext.engine.service.impl.ExportServiceImpl" result="global"></service>
+	 <service id="ext.sys.chart.rebuild" class="com.ruisi.ext.engine.service.impl.ChartRebuildServiceImpl" result="global"></service>
+	 <service id="ext.sys.cross.loadData" class="com.ruisi.ext.engine.service.impl.CrossDataLoadServiceImpl" result="global"></service>
+	 <service id="ext.sys.cross.rebuild" class="com.ruisi.ext.engine.service.impl.CrossRebuildServiceImpl" result="global"></service>
+	 <service id="ext.sys.emitter.text" class="com.ruisi.ext.engine.service.impl.TextEmitterServiceImpl" result="global"></service>
+	 <service id="ext.sys.cross.export" class="com.ruisi.ext.engine.service.impl.CrossExportServiceImpl" result="global"></service>
+	 <service id="ext.sys.mv.export" class="com.ruisi.ext.engine.service.impl.MVExportServiceImpl" result="global"></service>
+	 <service id="ext.sys.gridreport.rebuild" class="com.ruisi.ext.engine.service.impl.GridReportRebuildImpl" result="global"></service>
+	 
+</ext-config>

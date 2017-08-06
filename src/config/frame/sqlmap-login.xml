@@ -1,0 +1,69 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="vdop.frame.login">
+	<select id="login" resultClass="com.ruisi.vdop.bean.User">
+		select user_id "userId",
+		staff_id "staffId",
+		password "password" ,
+		site_id "siteId",
+		login_name "loginName",
+		state "state",
+		<isEqual property="dbName" compareValue="mysql">  
+			date_format(date_start,'%Y年%m月%d日') "sdate",
+			date_format(date_end,'%Y年%m月%d日') "edate",
+		</isEqual>
+		<isEqual property="dbName" compareValue="oracle"> 
+		 	TO_CHAR(date_start, 'YYYY/MM/DD') "sdate",
+      		TO_CHAR(date_end, 'YYYY/MM/DD') "edate",
+		</isEqual>
+		<isEqual property="dbName" compareValue="sqlser"> 
+		 	convert(varchar(20),date_start, 11) "sdate",
+      		convert(varchar(20),date_end, 11) "edate",
+		</isEqual>
+		date_end "enddate"
+		from  sc_login_user
+		where staff_id=#userName# 
+	</select>
+
+
+	<select id="getLogRid" resultClass="java.lang.Long">
+		select log_rid.nextval  from dual 
+	</select>
+	
+	<insert id="writeLoginLog" >
+		insert into  sc_login_log(rid,user_id,client_ip,login_date,last_active_date) 
+		values( #rid#,#userId#,#loginIp#,#loginTime#,#lastActive#)
+	</insert>
+	
+	<insert id="writeOnlineLog" >
+		insert into  sc_online_users(rid,user_id,session_id,login_time,active_time) 
+		values(#rid# ,#userId#,#sessionId#,#loginTime#,#lastActive#)
+	</insert>
+	
+	<update id="updateLogActive" >
+		update  sc_login_user 
+		<isEqual property="dbName" compareValue="mysql">  
+		set log_date = now(),
+		</isEqual>
+		<isEqual property="dbName" compareValue="oracle">  
+		set log_date = sysdate,
+		</isEqual>
+		<isEqual property="dbName" compareValue="sqlser">  
+		set log_date = getdate(),
+		</isEqual>
+		log_cnt = log_cnt + 1 
+		where STAFF_ID = #staffId#
+	</update>
+	
+	<update id="updateOnlineActive">
+		update  sc_online_users set active_time=#lastActive# 
+		<isNotNull  prepend=" where " property="rid" > 
+		    rid=#rid#
+		</isNotNull>
+		<isNull prepend=" where " property="rid" > 
+			 1=2
+		</isNull>
+	</update>
+	
+</sqlMap>

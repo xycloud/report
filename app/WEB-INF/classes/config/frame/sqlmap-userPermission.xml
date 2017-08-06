@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="vdop.frame.userPerm">
+	<select id="loadTreeData" resultClass="java.util.HashMap">
+		 select a.menu_id "id",
+		 	   menu_pid "pid",
+		       menu_name "text",
+		      b.menu_id "id2",
+		       c.menu_id "id3"
+		  from  sc_menu a left join 
+		       (select distinct (m.menu_id)
+		          from  sc_menu m,  role_user_rela a,  role_menu_rela b
+		         where a.role_id = b.role_id
+		           and b.menu_id = m.menu_id
+		           and a.user_id = #userId#) b on a.menu_id = b.menu_id           
+             left join
+		       (select r.menu_id from  user_menu_rela r where r.user_id = #userId#) c on a.menu_id = c.menu_id 
+		 order by a.menu_order, a.menu_id
+	</select>
+	<insert id = "addRole">
+			insert into  role_user_rela(user_id,role_id) values(#userId#,#rid#)
+	</insert>
+	
+	<delete id="delRole">
+			delete from  role_user_rela where role_id = #rid#
+	</delete>
+	
+	<select id="userReport" resultClass="java.util.HashMap">
+		select a.id "id", a.name "name", a.pid "pid", a.tp "tp", a.ord "ord", 
+		b.r_view "view", b.r_print "print", b.export "export", c.r_view "view2", c.r_print "print2", c.export "export2" from (
+        select id, name, pid, 'cata' tp, ord, 
+        <isEqual property="dbName" compareValue="mysql">  
+		now() 
+		</isEqual>
+		<isEqual property="dbName" compareValue="oracle">
+		sysdate
+		</isEqual>
+		<isEqual property="dbName" compareValue="sqlser">
+		GETDATE()
+		</isEqual>
+         crtdate
+         from report_catalog where type = -1
+		union all
+		select rid+100000 id, name, cata_id pid, 'report' tp, 1 ord, crt_date crtdate
+		 from olap_user_release
+		) a left join (
+		  select r.r_view,r.r_print,r.export,r.report_id 
+		  from  role_report_rela r,  role_user_rela u 
+		  where r.role_id =u.role_id and u.user_id = #userId#
+		) b on a.id - 100000 = b.report_id  left join (
+		  select r.r_view, r.r_print, r.export, r.report_id   
+		  from  user_report_rela r where r.user_id = #userId#
+		) c on a.id - 100000 = c.report_id
+		order by tp, ord, a.crtdate desc, id
+	</select>
+	
+</sqlMap>

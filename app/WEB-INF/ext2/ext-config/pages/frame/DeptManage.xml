@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ext-config>
+		<textField type="hidden" id="node" show="true"/>
+		<textField type="hidden" id="areaNo" show="true"/>
+		<textField type="hidden" id="deptDesc" show="true"/>
+		<textField type="hidden" id="id" show="true"/>
+		<textField type="hidden" id="pid" show="true"/>
+		<textField type="hidden" id="order" show="true"/>
+		<textField type="hidden" id="address" show="true"/>
+		<textField type="hidden" id="deptKind" show="true"/>
+		<textField type="hidden" id="reId" show="true"/>
+		<textField type="hidden" id="deptMemo" show="true"/>
+		<textField type="hidden" id="deptRank" show="true"/>
+		<include page="/pages/frame/dept.jsp"></include>
+		
+	
+</ext-config>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="vdop.frame.user">
+	
+	<insert id="adduser">
+		insert into  sc_login_user(
+		<isEqual property="dbName" compareValue="oracle">  
+		user_id, 
+		</isEqual>
+		login_name, password,gender,  mobilePhone, email, officeTel,DATE_START, DATE_END, STAFF_ID, STATE, site_id )
+										 values(
+										 <isEqual property="dbName" compareValue="oracle">  
+										#userId#,
+										</isEqual>
+										#loginName#,
+										#password#,
+										#gender#,
+										#mobilePhone#,
+										#email#,
+										#officeTel#,
+										<isEqual property="dbName" compareValue="mysql">  
+										now(),
+										now(),
+										</isEqual>
+										<isEqual property="dbName" compareValue="oracle">  
+										sysdate,
+										sysdate + 600,
+										</isEqual>
+										<isEqual property="dbName" compareValue="sqlser">  
+										getdate(),
+										getdate(),
+										</isEqual>
+										#staffId#,
+										1, #siteId#)
+	
+	</insert>
+	<update id="updateuser">
+		update  sc_login_user set login_name=#loginName#,gender=#gender#,
+		mobilephone=#mobilePhone#,email=#email#,officetel=#officeTel#,staff_id=#staffId# where user_id=#userId# 
+	
+	
+	</update>
+	<delete id="deleteuser">
+		delete from  sc_login_user where user_id = #userId# 
+	</delete>
+</sqlMap>

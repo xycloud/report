@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="vdop.frame.frame">
+	<select id="frametop" resultClass="java.util.HashMap">
+		select menu_id "menu_id",menu_name "menu_name",menu_url "menu_url", root_link "rootlink"
+					 from  sc_menu where menu_id in (
+					 select distinct menu_id from  user_menu_rela where user_id=
+					#userId#
+					  union
+          			select distinct menu_id from  role_menu_rela a, role_user_rela b
+          			where a.role_id = b.role_id and b.user_id = #userId#
+					
+					)
+					 and menu_pid='0' order by menu_order
+	</select>	
+	
+	<select id="frametop2" resultClass="java.util.HashMap">
+		select menu_id "id",menu_name "text",menu_url "url", root_link "rootlink",
+		 CASE
+         WHEN EXISTS
+          (SELECT 1 FROM  sc_menu b WHERE b.menu_pid = a.menu_id) THEN
+          'closed'
+         ELSE
+          'open'
+       END "state"
+					 from  sc_menu a where menu_id in (
+					 select distinct menu_id from  user_menu_rela where user_id=
+					#userId#
+					  union
+          			select distinct menu_id from  role_menu_rela a, role_user_rela b
+          			where a.role_id = b.role_id and b.user_id = #userId#
+					
+					)
+					 and menu_pid=#id# order by menu_order
+	</select>
+	
+</sqlMap>
